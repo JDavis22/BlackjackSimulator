@@ -1,0 +1,6 @@
+D:\Documents\VisualStudioProjects\BlackjackSimulator\BlackjackSimulator\bin\Debug\BlackjackSimulator.exe.config
+D:\Documents\VisualStudioProjects\BlackjackSimulator\BlackjackSimulator\bin\Debug\BlackjackSimulator.exe
+D:\Documents\VisualStudioProjects\BlackjackSimulator\BlackjackSimulator\bin\Debug\BlackjackSimulator.pdb
+D:\Documents\VisualStudioProjects\BlackjackSimulator\BlackjackSimulator\obj\Debug\BlackjackSimulator.csprojResolveAssemblyReference.cache
+D:\Documents\VisualStudioProjects\BlackjackSimulator\BlackjackSimulator\obj\Debug\BlackjackSimulator.exe
+D:\Documents\VisualStudioProjects\BlackjackSimulator\BlackjackSimulator\obj\Debug\BlackjackSimulator.pdb
