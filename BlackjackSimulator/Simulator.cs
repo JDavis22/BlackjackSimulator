@@ -18,19 +18,23 @@ namespace BlackjackSimulator
         int playerCardTwo;
         int playerHand = 0;
 
+        int numOfSims;
 
-        public Simulator(int dealerUpCard, int playerCardOne, int playerCardTwo)
+
+        public Simulator(int dealerUpCard, int playerCardOne, int playerCardTwo, int numOfSims)
         {
             deck = new Deck();
             this.dealerUpCard = dealerUpCard;
             this.playerCardOne = playerCardOne;
             this.playerCardTwo = playerCardTwo;
+            this.numOfSims = numOfSims;
         }
 
         public void BeginSim()
         {  
             InitDealerHand();
             InitPlayerHand();
+            RunSim();
         }
 
         private void InitDealerHand()
@@ -56,6 +60,13 @@ namespace BlackjackSimulator
                 }
                 
             }
+        }
+
+        private void RunSim()
+        {
+            // set up a hand class with status...
+            // maybe a hand object?? idk. maybe bulky.
+
         }
     }
 }

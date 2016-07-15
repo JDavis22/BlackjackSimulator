@@ -101,7 +101,7 @@ namespace BlackjackSimulator
         {
             Console.WriteLine("Running Simulation...");
             Console.WriteLine("...");
-            Simulator sim = new Simulator();
+            Simulator sim = new Simulator(dealerUpCard, playerCardOne, playerCardTwo, numOfSims);
             Console.ReadKey();
         }
     }
