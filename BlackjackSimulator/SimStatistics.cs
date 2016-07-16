@@ -8,6 +8,10 @@ namespace BlackjackSimulator
 {
     class SimStatistics
     {
-
+        public static int totalHandCount;
+        public static int playerWins;
+        public static int pushes;
+        public static string nextMove;
+  
     }
 }
