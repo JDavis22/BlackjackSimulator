@@ -133,7 +133,9 @@ namespace BlackjackSimulator
 
             if (canProceed && dealerUpCard >= 7)
             {
-                while (playerHand.HandValue <= 16 && playerHand.HandStatusString.Equals(HandStatus.LIVE))
+                while (playerHand.HandValue <= 16 &&
+                    playerHand.HandStatusString.Equals(HandStatus.LIVE) &&
+                    !playerHand.IsStay)
                 {
                     Hit(ref playerHand);
                 }
@@ -142,14 +144,14 @@ namespace BlackjackSimulator
 
             if (canProceed && dealerUpCard <= 6 && playerHand.HandValue <= 9)
             {
-                while (playerHand.HandValue <= 11)
+                while (playerHand.HandValue <= 11 && !playerHand.IsStay)
                 {
                     Hit(ref playerHand);
                 }
                 canProceed = false;
             }
 
-            if(canProceed)
+            if (canProceed)
             {
                 playerHand.IsStay = true;
             }
@@ -159,7 +161,9 @@ namespace BlackjackSimulator
 
         private void DealerDecision()
         {
-            while (dealerHand.HandValue <= 16 && playerHand.HandStatusString == HandStatus.LIVE)
+            while (dealerHand.HandValue <= 16 &&
+                playerHand.HandStatusString == HandStatus.LIVE &&
+                !dealerHand.IsStay)
             {
                 Hit(ref dealerHand);
             }
@@ -223,7 +227,14 @@ namespace BlackjackSimulator
 
         private void Hit(ref Hand hand)
         {
-            hand.HandValue = deck.getCard();
+            int newCard = deck.getCard();
+
+            if (newCard == 11)
+            {
+                newCard = newCard + hand.HandValue > 21 ? 1 : 11;
+            }
+
+            hand.HandValue = newCard;
 
             if (hand.HandValue > 21)
             {
@@ -232,9 +243,11 @@ namespace BlackjackSimulator
             }
             else if (hand.HandValue >= 17)
             {
-
+                hand.IsStay = true;
             }
         }
+
+
 
         private void DoubleDown(ref Hand hand)
         {
