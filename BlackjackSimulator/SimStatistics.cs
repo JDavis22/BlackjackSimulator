@@ -12,6 +12,14 @@ namespace BlackjackSimulator
         public static int playerWins;
         public static int pushes;
         public static string nextMove;
+
+        public static void Init()
+        {
+            totalHandCount = 0;
+            playerWins = 0;
+            pushes = 0;
+            nextMove = "";
+        }
   
     }
 }

@@ -15,6 +15,7 @@ namespace BlackjackSimulator
         public Deck()
         {
             InitDeck();
+            Shuffle();
         }
 
         private void InitDeck()
@@ -54,7 +55,7 @@ namespace BlackjackSimulator
             shoeList = shoeArray.ToList<int>();
         }
 
-        public int getCard()
+        public int GetCard()
         {
             int randomPos = 0;
             int cardValue = 0;
@@ -72,6 +73,18 @@ namespace BlackjackSimulator
             return cardValue;
         }
 
+        private void Shuffle()
+        {
+            int temp;
+            for(int i = 1; i < shoeList.Count; i++)
+            {
+                Random rand = new Random();
+                int randNum = rand.Next(i, shoeList.Count - 1);
 
+                temp = shoeList[i];
+                shoeList[i] = shoeList[randNum];
+                shoeList[randNum] = temp;  
+            }
+        }
     }
 }

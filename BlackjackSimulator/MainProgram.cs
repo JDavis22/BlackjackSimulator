@@ -99,13 +99,19 @@ namespace BlackjackSimulator
 
         static void RunSim()
         {
-            Console.WriteLine("Running Simulation...");
-            Console.WriteLine("...");
-            Simulator sim = new Simulator(dealerUpCard, playerCardOne, playerCardTwo, numOfSims);
-            sim.BeginSim();
-            Console.WriteLine(SimStatistics.playerWins);
-            Console.WriteLine(SimStatistics.totalHandCount);
-            Console.ReadKey();
+            for(int i = 0; i <= 4; i++)
+            {
+                SimStatistics.Init();
+
+                Console.WriteLine("Running Simulation...");
+                Console.WriteLine("...");
+                Simulator sim = new Simulator(dealerUpCard, playerCardOne, playerCardTwo, numOfSims);
+                sim.BeginSim();
+                Console.WriteLine("WINS: " + SimStatistics.playerWins);
+                Console.WriteLine("PUSHES: " + SimStatistics.pushes);
+                Console.WriteLine("HANDS: " + SimStatistics.totalHandCount);
+                Console.ReadKey();
+            }
         }
     }
 }

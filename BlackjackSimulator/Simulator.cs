@@ -34,7 +34,7 @@ namespace BlackjackSimulator
         public void BeginSim()
         {
             for (int i = 0; i < numOfSims; i++)
-            {
+            {                
                 handsList.Clear();
                 InitDealerHand();
                 InitPlayerHand();
@@ -44,7 +44,7 @@ namespace BlackjackSimulator
 
         private void InitDealerHand()
         {
-            dealerDownCard = deck.getCard();
+            dealerDownCard = deck.GetCard();
             dealerHand = new Hand(dealerUpCard, dealerDownCard, HandOwner.DEALER);
             handsList.Add(dealerHand);
         }
@@ -82,10 +82,6 @@ namespace BlackjackSimulator
             {
                 PlayerDecision();
                 DealerDecision();
-            }
-            else
-            {
-                RoundOver();
             }
 
             RoundOver();
@@ -227,7 +223,7 @@ namespace BlackjackSimulator
 
         private void Hit(ref Hand hand)
         {
-            int newCard = deck.getCard();
+            int newCard = deck.GetCard();
 
             if (newCard == 11)
             {
