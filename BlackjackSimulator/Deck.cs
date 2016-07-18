@@ -68,6 +68,7 @@ namespace BlackjackSimulator
             if(shoeList.Count <= 30)
             {
                 InitDeck();
+                Shuffle();
             }
 
             return cardValue;

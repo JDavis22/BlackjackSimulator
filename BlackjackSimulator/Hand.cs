@@ -14,6 +14,7 @@ namespace BlackjackSimulator
         private int handValue;
         private string handStatus;
         private string handOwner;
+        private bool isDoubleDown;
         private bool isStay;
         private bool isBlackjack;
 
@@ -26,11 +27,32 @@ namespace BlackjackSimulator
             handStatus = HandStatus.LIVE;
             isStay = false;
             isBlackjack = false;
+            isDoubleDown = false;
         }
 
-        public int CardOne { get; }
+        public int CardOne
+        {
+            get
+            {
+                return cardOne;
+            }
+            set
+            {
+                cardOne = value;
+            }
+        }
 
-        public int CardTwo { get; }
+        public int CardTwo
+        {
+            get
+            {
+                return cardTwo;
+            }
+            set
+            {
+                cardTwo = value;
+            }
+        }
 
         public string HandStatusString
         {
@@ -69,6 +91,18 @@ namespace BlackjackSimulator
             set
             {
                 handValue += value;
+            }
+        }
+
+        public bool IsDoubleDown
+        {
+            get
+            {
+                return isDoubleDown;
+            }
+            set
+            {
+                isDoubleDown = value;
             }
         }
     }

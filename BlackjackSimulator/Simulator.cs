@@ -106,8 +106,6 @@ namespace BlackjackSimulator
 
         private void PlayerDecision()
         {
-            bool shouldHit = false;
-            bool shouldStay = false;
             bool shouldSplit = false;
             bool shouldDoubleDown = false;
             bool canProceed = true;
@@ -122,6 +120,7 @@ namespace BlackjackSimulator
             }
             else if (shouldDoubleDown)
             {
+                playerHand.IsDoubleDown = true;
                 DoubleDown(ref playerHand);
                 canProceed = false;
             }
@@ -173,28 +172,45 @@ namespace BlackjackSimulator
             {
                 switch (playerCardOne)
                 {
-                    case 2:
-                        break;
+                    case 2: // fall through
                     case 3:
+                        if(dealerUpCard <= 7)
+                        {
+                            shouldSplit = true;
+                        }
                         break;
                     case 4:
-                        break;
-                    case 5:
+                        if(dealerUpCard == 5 || dealerUpCard == 6)
+                        {
+                            shouldSplit = true;
+                        }
                         break;
                     case 6:
+                        if(dealerUpCard <= 6)
+                        {
+                            shouldSplit = true;
+                        }
                         break;
                     case 7:
+                        if(dealerUpCard <= 7)
+                        {
+                            shouldSplit = true;
+                        }
                         break;
                     case 8:
                         shouldSplit = true;
                         break;
                     case 9:
-                        break;
-                    case 10:
-                        shouldSplit = false;
+                        if(dealerUpCard != 7 && dealerUpCard != 10 && dealerUpCard != 11)
+                        {
+                            shouldSplit = true;
+                        }
                         break;
                     case 11:
                         shouldSplit = true;
+                        break;
+                    default:
+                        shouldSplit = false;
                         break;
                 }
             }
@@ -205,7 +221,26 @@ namespace BlackjackSimulator
         private bool ShouldDoubleDown()
         {
             bool shouldDoubleDown = false;
-
+            
+            if (playerCardOne == 11 || playerCardTwo == 11)
+            {
+                if ((playerHand.HandValue == 3 || playerHand.HandValue == 4) &&
+                    (dealerUpCard == 5 || dealerUpCard == 6))
+                {
+                    shouldDoubleDown = true;
+                }
+                else if ((playerHand.HandValue == 5 || playerHand.HandValue == 6) &&
+                    (dealerUpCard >= 4 || dealerUpCard <= 6))
+                {
+                    shouldDoubleDown = true;
+                }
+                else if ((playerHand.HandValue == 7 || playerHand.HandValue == 8) &&
+                    (dealerUpCard >= 3 || dealerUpCard <= 6))
+                {
+                    shouldDoubleDown = true;
+                }
+            }
+             
             if ((playerHand.HandValue == 11 ||
                 playerHand.HandValue == 10) &&
                 (playerHand.HandValue > dealerUpCard))
@@ -234,8 +269,12 @@ namespace BlackjackSimulator
 
             if (hand.HandValue > 21)
             {
-                hand.HandStatusString = HandStatus.BUSTED;
-                hand.IsStay = true;
+                TryConvertAcesToOne(ref hand);
+                if (hand.HandValue > 21)
+                {
+                    hand.HandStatusString = HandStatus.BUSTED;
+                    hand.IsStay = true;
+                }
             }
             else if (hand.HandValue >= 17)
             {
@@ -243,7 +282,27 @@ namespace BlackjackSimulator
             }
         }
 
+        private bool TryConvertAcesToOne(ref Hand hand)
+        {
+            bool canRevertAces = false;
 
+            if (!hand.IsDoubleDown)
+            {
+                if (hand.CardOne == 11)
+                {
+                    hand.CardOne = 1;
+                    canRevertAces = true;
+                }
+
+                if (hand.CardTwo == 11)
+                {
+                    hand.CardTwo = 1;
+                    canRevertAces = true;
+                }
+            }
+
+            return canRevertAces;
+        }
 
         private void DoubleDown(ref Hand hand)
         {
@@ -264,15 +323,18 @@ namespace BlackjackSimulator
                 // then send to stat class for accumulation.
                 if (hand.HandOwnerString.Equals(HandOwner.PLAYER))
                 {
-                    if (hand.HandValue > dealerHand.HandValue)
+                    if (hand.HandValue > dealerHand.HandValue &&
+                        hand.HandStatusString.Equals(HandStatus.LIVE) ||
+                        (hand.HandStatusString.Equals(HandStatus.LIVE) &&
+                         dealerHand.HandStatusString.Equals(HandStatus.BUSTED))) 
                     {
                         SimStatistics.playerWins++;
                     }
-                    else if (hand.HandValue == dealerHand.HandValue)
+                    else if (hand.HandValue == dealerHand.HandValue && hand.HandStatusString.Equals(HandStatus.LIVE))
                     {
                         SimStatistics.pushes++;
                     }
-                    SimStatistics.totalHandCount = numOfSims + extraHands;
+                    SimStatistics.totalHandCount++;
                 }
             }
         }

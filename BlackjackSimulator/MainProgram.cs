@@ -35,7 +35,7 @@ namespace BlackjackSimulator
 
             Console.WriteLine("Please enter the Dealer's Up Card");
 
-            if (Int32.TryParse(Console.ReadLine(), out result) && result <= 11 && result >= 1)
+            if (Int32.TryParse(Console.ReadLine(), out result) && result <= 11 && result >= 2)
             {
                 dealerUpCard = result;
             }
@@ -52,7 +52,7 @@ namespace BlackjackSimulator
 
             Console.WriteLine("Please enter the Player's First Card");
 
-            if (Int32.TryParse(Console.ReadLine(), out result) && result <= 11 && result >= 1)
+            if (Int32.TryParse(Console.ReadLine(), out result) && result <= 11 && result >= 2)
             {
                 playerCardOne = result;
             }
@@ -69,7 +69,7 @@ namespace BlackjackSimulator
 
             Console.WriteLine("Please enter the Player's Second Card.");
 
-            if (Int32.TryParse(Console.ReadLine(), out result) && result <= 11 && result >= 1)
+            if (Int32.TryParse(Console.ReadLine(), out result) && result <= 11 && result >= 2)
             {
                 playerCardTwo = result;
             }
@@ -103,12 +103,17 @@ namespace BlackjackSimulator
             {
                 SimStatistics.Init();
 
+                Console.WriteLine();
                 Console.WriteLine("Running Simulation...");
-                Console.WriteLine("...");
+                Console.WriteLine();
+
                 Simulator sim = new Simulator(dealerUpCard, playerCardOne, playerCardTwo, numOfSims);
                 sim.BeginSim();
+
                 Console.WriteLine("WINS: " + SimStatistics.playerWins);
                 Console.WriteLine("PUSHES: " + SimStatistics.pushes);
+                Console.WriteLine("LOSSES: " + (SimStatistics.totalHandCount - SimStatistics.playerWins - SimStatistics.pushes));
+                Console.WriteLine("WIN PERCENTAGE: " + ((Double)SimStatistics.playerWins / (Double)SimStatistics.totalHandCount) * 100);
                 Console.WriteLine("HANDS: " + SimStatistics.totalHandCount);
                 Console.ReadKey();
             }
