@@ -17,6 +17,7 @@ namespace BlackjackSimulator
         int playerCardOne;
         int playerCardTwo;
         Hand playerHand;
+        Hand playerHandTwo;
 
         int numOfSims;
         int extraHands;
@@ -80,7 +81,7 @@ namespace BlackjackSimulator
 
             if (!dealerHand.IsBlackjack)
             {
-                PlayerDecision();
+                PlayerDecision(ref playerHand);
                 DealerDecision();
             }
 
@@ -104,14 +105,14 @@ namespace BlackjackSimulator
             }
         }
 
-        private void PlayerDecision()
+        private void PlayerDecision(ref Hand hand)
         {
             bool shouldSplit = false;
             bool shouldDoubleDown = false;
             bool canProceed = true;
 
-            shouldSplit = ShouldSplitHand();
-            shouldDoubleDown = ShouldDoubleDown();
+            shouldSplit = ShouldSplitHand(ref hand);
+            shouldDoubleDown = ShouldDoubleDown(ref hand);
 
             if (shouldSplit)
             {
@@ -120,35 +121,35 @@ namespace BlackjackSimulator
             }
             else if (shouldDoubleDown)
             {
-                playerHand.IsDoubleDown = true;
-                DoubleDown(ref playerHand);
+                hand.IsDoubleDown = true;
+                DoubleDown(ref hand);
                 canProceed = false;
             }
 
 
             if (canProceed && dealerUpCard >= 7)
             {
-                while (playerHand.HandValue <= 16 &&
-                    playerHand.HandStatusString.Equals(HandStatus.LIVE) &&
-                    !playerHand.IsStay)
+                while (hand.HandValue <= 16 &&
+                    hand.HandStatusString.Equals(HandStatus.LIVE) &&
+                    !hand.IsStay)
                 {
-                    Hit(ref playerHand);
+                    Hit(ref hand);
                 }
                 canProceed = false;
             }
 
-            if (canProceed && dealerUpCard <= 6 && playerHand.HandValue <= 9)
+            if (canProceed && dealerUpCard <= 6 && hand.HandValue <= 9)
             {
-                while (playerHand.HandValue <= 11 && !playerHand.IsStay)
+                while (hand.HandValue <= 11 && !hand.IsStay)
                 {
-                    Hit(ref playerHand);
+                    Hit(ref hand);
                 }
                 canProceed = false;
             }
 
             if (canProceed)
             {
-                playerHand.IsStay = true;
+                hand.IsStay = true;
             }
 
 
@@ -157,20 +158,22 @@ namespace BlackjackSimulator
         private void DealerDecision()
         {
             while (dealerHand.HandValue <= 16 &&
-                playerHand.HandStatusString == HandStatus.LIVE &&
-                !dealerHand.IsStay)
+                playerHand.HandStatusString.Equals(HandStatus.LIVE) || 
+                (playerHandTwo != null && 
+                playerHandTwo.HandStatusString.Equals(HandStatus.LIVE) &&
+                !dealerHand.IsStay))
             {
                 Hit(ref dealerHand);
             }
         }
 
-        private bool ShouldSplitHand()
+        private bool ShouldSplitHand(ref Hand hand)
         {
             bool shouldSplit = false;
 
-            if (playerCardOne == playerCardTwo)
+            if (hand.CardOne == hand.CardTwo)
             {
-                switch (playerCardOne)
+                switch (hand.CardOne)
                 {
                     case 2: // fall through
                     case 3:
@@ -218,36 +221,36 @@ namespace BlackjackSimulator
             return shouldSplit;
         }
 
-        private bool ShouldDoubleDown()
+        private bool ShouldDoubleDown(ref Hand hand)
         {
             bool shouldDoubleDown = false;
             
-            if (playerCardOne == 11 || playerCardTwo == 11)
+            if (hand.CardOne == 11 || hand.CardTwo == 11)
             {
-                if ((playerHand.HandValue == 3 || playerHand.HandValue == 4) &&
+                if ((hand.HandValue == 3 || hand.HandValue == 4) &&
                     (dealerUpCard == 5 || dealerUpCard == 6))
                 {
                     shouldDoubleDown = true;
                 }
-                else if ((playerHand.HandValue == 5 || playerHand.HandValue == 6) &&
+                else if ((hand.HandValue == 5 || hand.HandValue == 6) &&
                     (dealerUpCard >= 4 || dealerUpCard <= 6))
                 {
                     shouldDoubleDown = true;
                 }
-                else if ((playerHand.HandValue == 7 || playerHand.HandValue == 8) &&
+                else if ((hand.HandValue == 7 || hand.HandValue == 8) &&
                     (dealerUpCard >= 3 || dealerUpCard <= 6))
                 {
                     shouldDoubleDown = true;
                 }
             }
              
-            if ((playerHand.HandValue == 11 ||
-                playerHand.HandValue == 10) &&
-                (playerHand.HandValue > dealerUpCard))
+            if ((hand.HandValue == 11 ||
+                hand.HandValue == 10) &&
+                (hand.HandValue > dealerUpCard))
             {
                 shouldDoubleDown = true;
             }
-            else if (playerHand.HandValue == 9 &&
+            else if (hand.HandValue == 9 &&
                 dealerUpCard <= 6 && dealerUpCard >= 3)
             {
                 shouldDoubleDown = true;
@@ -312,7 +315,49 @@ namespace BlackjackSimulator
 
         private void SplitHand()
         {
+            // splitting player hand into two
+            int handOneBase = playerHand.CardOne;
+            int handTwoBase = playerHand.CardTwo;
+            int handOneSecond = deck.GetCard();
+            int handTwoSecond = deck.GetCard();
 
+            if(handOneSecond == 11)
+            {
+                if(handOneSecond + handOneBase < 18 ||
+                    handOneSecond + handOneBase > 21)
+                {
+                    handOneSecond = 1;
+                }
+            }
+
+            if (handTwoSecond == 11)
+            {
+                if (handTwoSecond + handTwoBase < 18 ||
+                    handTwoSecond + handTwoBase > 21)
+                {
+                    handTwoSecond = 1;
+                }
+            }
+
+            playerHand = new Hand(handOneBase, handOneSecond, HandOwner.PLAYER);
+            playerHandTwo = new Hand(handTwoBase, handTwoSecond, HandOwner.PLAYER);
+
+            handsList.Clear();
+            handsList.Add(playerHand);
+            handsList.Add(playerHandTwo);
+            handsList.Add(dealerHand);
+
+            if (playerHand.CardOne == 11 && playerHandTwo.CardOne == 11)
+            {
+                // just end the hand.
+                playerHand.IsStay = true;
+                playerHandTwo.IsStay = true;
+            }
+            else
+            {
+                PlayerDecision(ref playerHand);
+                PlayerDecision(ref playerHandTwo);
+            }
         }
 
         private void RoundOver()
